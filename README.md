@@ -6,10 +6,14 @@ promtool tsdb dump-openmetrics \
             '/var/lib/prometheus' > /tmp/export.om"
 
 
-2) Import to new PVC using prometheus import pod
+2) Import to new PVC using prometheus import po
+   
 2a) Ensure to run as root user
-2b) Copy the export.om manually if needed #for issues in copy by importer pod - "kubectl -n monitoring cp export.om prom-tsdb-importer:/work/"
 
-3) Create destination prometheus statefulset referencing imported prometheus PVC along with prometheus configmap
+2b) Get the export.om - "kubectl -n portworx cp prometheus-px-prometheus-0:/prometheus/temp/export.om export.om"
 
-4) Create Grafana with this newly created destination prometheus URL as source
+2c) Copy the export.om manually if needed #for issues in copy by importer pod - "kubectl -n monitoring cp export.om prom-tsdb-importer:/work/"
+
+4) Create destination prometheus statefulset referencing imported prometheus PVC along with prometheus configmap
+
+5) Create Grafana with this newly created destination prometheus URL as source
