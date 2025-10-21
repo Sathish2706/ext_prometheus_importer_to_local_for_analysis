@@ -35,9 +35,6 @@ spec:
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus"
-            # optional tuning:
-            # - "--storage.tsdb.retention.time=15d"
-            # - "--storage.tsdb.wal-compression"
           ports:
             - name: web
               containerPort: 9090
@@ -50,12 +47,6 @@ spec:
         - name: config
           configMap:
             name: prometheus-config
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        storageClassName: px-csi-db
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 50Gi
+        - name: data
+          persistentVolumeClaim:
+            claimName: prometheus-data
