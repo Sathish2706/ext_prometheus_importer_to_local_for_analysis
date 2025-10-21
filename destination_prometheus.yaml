@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    scrape_configs:
+      # Minimal example: scrape itself
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  replicas: 1
+  serviceName: prometheus
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: quay.io/prometheus/prometheus:v3.4.0
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+            # optional tuning:
+            # - "--storage.tsdb.retention.time=15d"
+            # - "--storage.tsdb.wal-compression"
+          ports:
+            - name: web
+              containerPort: 9090
+          volumeMounts:
+            - name: data
+              mountPath: /prometheus
+            - name: config
+              mountPath: /etc/prometheus
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        storageClassName: px-csi-db
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 50Gi
