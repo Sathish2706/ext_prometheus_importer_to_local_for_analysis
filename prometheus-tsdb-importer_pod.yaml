@@ -24,7 +24,7 @@ spec:
           promtool tsdb create-blocks-from \
             --max-block-duration=48h \
             openmetrics /work/export.om /work/import-blocks
-          sleep 300
+          sleep 2
           chmod 777 /work
           ls -lrt /work/
           head /work/import-blocks
