@@ -8,7 +8,7 @@ promtool tsdb dump-openmetrics \
 
 2) Import to new PVC using prometheus import pod
 2a) Ensure to run as root user
-2b) Copy the export.om manually if needed #for issues in copy by importer pod
+2b) Copy the export.om manually if needed #for issues in copy by importer pod - "kubectl -n monitoring cp export.om prom-tsdb-importer:/work/"
 
 3) Create destination prometheus statefulset referencing imported prometheus PVC along with prometheus configmap
 
